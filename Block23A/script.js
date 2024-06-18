@@ -18,7 +18,7 @@ const fetchAllPlayers = async () => {
     const response = await fetch(API_URL + "/players");
     const result = await response.json();
     console.log(result, "in fetchAllPlayers function")
-    return result.data
+    return result.data.players
     // TODO
   } catch (err) {
     console.error("Uh oh, trouble fetching players!", err);
@@ -34,7 +34,7 @@ const fetchSinglePlayer = async (playerId) => {
     const response = await fetch(`${API_URL}/${playerId}`)
     const result = await response.json()
     console.log(result, "In fetch single player")
-    return result.data
+    return result.data.player
   
     // TODO
   } catch (err) {
@@ -49,8 +49,17 @@ const fetchSinglePlayer = async (playerId) => {
  */
 const addNewPlayer = async (playerObj) => {
   try {
-    
-    // TODO
+    const response = await fetch(API_URL + "/players",{
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/JSON',
+      },
+      body:JSON.stringify(playerObj)
+
+    })
+    const result = await response.json()
+    console.log(result)
+// TODO
   } catch (err) {
     console.error("Oops, something went wrong with adding that player!", err);
   }
@@ -63,9 +72,9 @@ const addNewPlayer = async (playerObj) => {
 const removePlayer = async (playerId) => {
   try {
     const response = await fetch(`${API_URL}/${playerId}`,{
-      method: "DELETE"
-    })
-    const result = await response.json()
+      method: "DELETE",
+    });
+    const result = await response.json(playerId)
     const players = await fetchAllPlayers();
     renderAllPlayers(players);
     // TODO
@@ -112,7 +121,7 @@ const renderAllPlayers = (playerList) => {
     deleteButton.textContent = "Delete this Puppy"
     
     nameEl.textContent = playerList[i].name
-    imgEl.setAttribute("src", playerList[i].imgURL)
+    imgEl.setAttribute("src", playerList[i].imageUrl)
     imgEl.setAttribute("alt", playerList[i].name)
 
     viewButton.addEventListener("click", async (e) => {
@@ -179,11 +188,13 @@ const renderNewPlayerForm = () => {
 
     submitButton.addEventListener("click",(event) =>{
       event.preventDefault()
+      addNewPlayer({name: nameInput.value, breed: breedInput.value})
+
 
     })
 
-    nameLabel.textContent = "Name"
-    breedLabel.textContent = "Breed"
+    nameLabel.textContent = "Name: "
+    breedLabel.textContent = "Breed: "
     submitButton.textContent = "Submit"
 
     form.append(nameLabel, nameInput, breedLabel, breedInput, submitButton)
