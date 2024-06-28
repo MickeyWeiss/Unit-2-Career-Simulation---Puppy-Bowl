@@ -74,7 +74,7 @@ const removePlayer = async (playerId) => {
     const response = await fetch(`${API_URL}/${playerId}`,{
       method: "DELETE",
     });
-    const result = await response.json(playerId)
+    const result = await response.json()
     const players = await fetchAllPlayers();
     renderAllPlayers(players);
     // TODO
